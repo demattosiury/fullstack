@@ -1,0 +1,7 @@
+# python
+.venv
+**/__pycache__/
+.pytest_cache/
+
+# files
+Teste Dev.pdf
