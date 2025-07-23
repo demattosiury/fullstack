@@ -15,6 +15,11 @@ backend/
 │   ├── main.py                 # Entry point da aplicação (FastAPI)
 │   ├── api/                    # Interface HTTP (camada de entrega)
 │   │   └── routes.py
+│   ├── core/                    # Camada interna de configurações
+│   │   ├── database.py
+│   │   └── logging_config.py
+│   ├── logs/                   # Logs da api
+│   │   └── api.log
 │   ├── services/               # Camada de caso de uso / regras de negócio
 │   │   └── gecko.py
 │   ├── models/                 # DTOs (Data Transfer Objects) com validação
@@ -34,6 +39,10 @@ Com o caminho dessa pasta ('project\backend\') sendo exibido no terminal Windows
 2. ``.\venv\Scripts\activate``
     1. Caso retorne "PSSecurityException", será necessário permitir a execução de scripts para o usuário atual com: ``Set-ExecutionPolicy RemoteSigned -Scope CurrentUser``
 3. ``uvicorn app.main:app --reload``
+
+## Desenvolvimento - Docker
+Com o caminho dessa pasta ('project\backend\') sendo exibido no terminal Windows de comando, executar:
+1. ``docker-compose up --build -d``
 
 ## Testes - Modo local
 Com o caminho dessa pasta ('project\backend\') sendo exibido no terminal Windows de comando, executar:
