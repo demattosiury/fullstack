@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 import logging
 
-from app.services.gecko import fetch_status
+from app.services.gecko_service import fetch_status
 from app.models.gecko import GeckoStatusResponse
 
 router = APIRouter()

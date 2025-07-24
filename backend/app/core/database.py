@@ -6,7 +6,7 @@ import logging
 
 logger = logging.getLogger("app.core.database")
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_LOCAL_URL") if os.getenv('API_ENV') == 'development' else os.getenv("DATABASE_DOCKER_URL")
 
 engine = create_async_engine(DATABASE_URL, echo=True, future=True)
 

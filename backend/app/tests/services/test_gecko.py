@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import AsyncMock, Mock, patch
 
-from app.services.gecko import fetch_status, PING_URL
+from app.services.gecko_service import fetch_status, PING_URL
 from app.models.gecko import GeckoStatusResponse
 
 @pytest.mark.asyncio

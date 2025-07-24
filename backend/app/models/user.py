@@ -10,16 +10,19 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
+    api_key = Column(String, nullable=True)
     hashed_password = Column(String, nullable=False)
 
 # Pydantic DTOs
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
+    api_key: str
 
 class UserRead(BaseModel):
     id: int
     email: EmailStr
+    api_key: str
 
     model_config = {
         "from_attributes": True

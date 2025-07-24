@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.models.user import User, UserCreate
+from app.models.user import User, UserCreate, UserRead
 from app.core.security import get_password_hash, verify_password
 import logging
 
@@ -25,7 +25,7 @@ async def create_user(db: AsyncSession, user_in: UserCreate):
     logger.info("Criando novo usuário...")
     try:
         hashed_pw = get_password_hash(user_in.password)
-        user = User(email=user_in.email, hashed_password=hashed_pw)
+        user = User(email=user_in.email, api_key=user_in.api_key, hashed_password=hashed_pw)
         db.add(user)
         await db.commit()
         await db.refresh(user)
