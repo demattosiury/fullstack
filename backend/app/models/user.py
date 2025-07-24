@@ -1,0 +1,30 @@
+from pydantic import BaseModel, EmailStr
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import declarative_base
+
+Base = declarative_base()
+
+# SQLAlchemy model
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+
+# Pydantic DTOs
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+
+class UserRead(BaseModel):
+    id: int
+    email: EmailStr
+
+    model_config = {
+        "from_attributes": True
+    }
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str

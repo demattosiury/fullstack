@@ -1,6 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
+from app.models.user import Base as UserBase
 import os
+import logging
+
+logger = logging.getLogger("app.core.database")
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -14,5 +18,22 @@ AsyncSessionLocal = sessionmaker(
 
 # Dependency
 async def get_db():
-    async with AsyncSessionLocal() as session:
-        yield session
+    logger.info("Iniciando sessão com banco de dados...")
+    try:
+        async with AsyncSessionLocal() as session:
+            yield session
+    except Exception as e:
+        logger.error(f"Erro ao iniciar sessão com banco de dados: {e}", exc_info=True)
+        raise
+    finally:
+        logger.info("Encerrando sessão com banco de dados.")
+
+async def init_models():
+    logger.info("Inicializando tabelas no banco de dados")
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(UserBase.metadata.create_all)
+        logger.info("Modelos criados com sucesso")
+    except Exception as e:
+        logger.error(f"Erro ao criar os modelos no banco de dados: {e}", exc_info=True)
+        raise

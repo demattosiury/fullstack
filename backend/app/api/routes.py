@@ -10,7 +10,6 @@ logger = logging.getLogger("app.api.routes")
 @router.get("/gecko/status", response_model=GeckoStatusResponse)
 async def get_gecko_status():
     logger.info(f"Buscando o status da GeckoCoinAPI...")
-    logger.debug('teste')
     try:
         status = await fetch_status()
         logger.info(f"Retornando status da GeckoCoinAPI.")
