@@ -11,7 +11,9 @@ load_dotenv()
 
 # Importa DATABASE_URL e Base (com seus modelos)
 from app.core.database import DATABASE_URL
-from app.models.user import Base  # se tiver mais modelos, importe também
+from app.core.database import Base
+import app.models.gecko
+import app.models.user
 
 # Configuração Alembic
 config = context.config

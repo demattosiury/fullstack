@@ -6,8 +6,8 @@ from app.models.user import User, UserCreate, UserRead, UserLogin
 
 @pytest.mark.asyncio
 async def test_register_success():
-    fake_user_create = UserCreate(email="teste@exemplo.com", password="123456")
-    fake_user_read = UserRead(id=1, email="teste@exemplo.com")
+    fake_user_create = UserCreate(email="teste@exemplo.com", api_key="api_key_000", password="123456")
+    fake_user_read = UserRead(id=1, email="teste@exemplo.com", api_key="api_key_000")
 
     #fake_user = User(id=1, email="teste@exemplo.com", hashed_password='hashed')
 
@@ -20,11 +20,13 @@ async def test_register_success():
         async with AsyncClient(transport=transport, base_url="http://test") as ac:
             response = await ac.post("/api/v1/auth/registrar", json={
                 "email": fake_user_create.email,
+                "api_key": fake_user_create.api_key,
                 "password": fake_user_create.password
             })
 
         assert response.status_code == 200
         data = response.json()
+        assert data["api_key"] == fake_user_read.api_key
         assert data["email"] == fake_user_read.email
 
 @pytest.mark.asyncio

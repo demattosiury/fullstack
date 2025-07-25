@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordRequestForm
 from app.models.user import UserCreate, UserRead
@@ -27,8 +27,11 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
         else:
             logger.warning(f"Usuário não foi criado: {new_user.email}")
             raise HTTPException(status_code=500, detail="Erro interno do servidor.")
+    except HTTPException:
+        raise  # repassa erros HTTP para FastAPI tratar
     except Exception as e:
         logger.error(f"Erro na requisição para criar novo usuário: {e}",exc_info=True)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Erro interno do servidor.")
 
 @router.post("/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
@@ -39,8 +42,11 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
             raise HTTPException(status_code=401, detail="Dados inválidos.")
         
         access_token = create_access_token(
-            data={"sub": str(user.id)}
+            data={"sub": str(user.email), "api_key":str(user.api_key)}
         )
         return {"access_token": access_token, "token_type": "bearer"}
+    except HTTPException:
+        raise  # repassa erros HTTP para FastAPI tratar
     except Exception as e:
         logger.error(f"Erro na requisição para autenticar usuário ({form_data.username}): {e}",exc_info=True)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Erro interno do servidor.")

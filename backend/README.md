@@ -8,24 +8,25 @@ A arquitetura é uma variação da Clean Architecture aplicada ao FastAPI, com i
 ### Estrutura
 ```
 backend/
-├── .venv/
 ├── .env
-├── alembic/                   # Migrations
 ├── alembic.ini
 ├── docker-compose.yml
 ├── Dockerfile
 ├── README.md
 ├── requirements.txt
+├── .venv/
+├── alembic/                   # Migrations
 ├── app/
 │   ├── main.py                 # Entry point da aplicação (FastAPI)
 │   ├── api/                    # Interface HTTP (camada de entrega)
+│   │   ├── api_routes.py
 │   │   ├── auth_routes.py
-│   │   ├── user_routes.py
-│   │   └── routes.py
+│   │   ├── gecko_routes.py
+│   │   └── user_routes.py
 │   ├── core/                    # Camada interna de configurações
 │   │   ├── database.py
-│   │   ├── security.py
-│   │   └── logging_config.py
+│   │   ├── logging_config.py
+│   │   └── security.py
 │   ├── logs/                   # Logs da api
 │   │   └── api.log
 │   ├── models/                 # DTOs (Data Transfer Objects) com validação
@@ -60,7 +61,7 @@ Com o caminho dessa pasta ('project\backend\') sendo exibido no terminal Windows
 
 ## Alembic - Migrations no Banco de dados
 É utilizado Alembic para a automatização de migrations no banco de dados.
-1. Inserir ``Base`` do modelo no arquivo: ``alembic/env.py``
+1. Inserir Base do modelo no arquivo: ``alembic/env.py``
 2. Criar migration para novo modelo: ``alembic revision --autogenerate -m "descrição da mudança"``
 3. Aplicar migration no banco de dados: ``alembic upgrade head``
 

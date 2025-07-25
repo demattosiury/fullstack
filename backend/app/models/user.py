@@ -1,8 +1,8 @@
 from pydantic import BaseModel, EmailStr
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import declarative_base
+from app.core.database import Base
 
-Base = declarative_base()
+
 
 # SQLAlchemy model
 class User(Base):
@@ -31,3 +31,9 @@ class UserRead(BaseModel):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
+class UserUpdate(BaseModel):
+    email: EmailStr
+    api_key: str
+    old_password: str
+    new_password: str

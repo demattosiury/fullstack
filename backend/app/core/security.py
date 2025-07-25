@@ -4,8 +4,11 @@ from jose import jwt
 from typing import Optional
 import os
 import logging 
+from dotenv import load_dotenv
 
 logger = logging.getLogger("app.core.security")
+
+load_dotenv()
 
 SECRET_KEY = os.getenv("API_SECRET_KEY")
 ALGORITHM = "HS256"

@@ -35,15 +35,16 @@ async def test_create_user_success(mock_hash):
     db.commit = AsyncMock()
     db.refresh = AsyncMock()
 
-    user_in = UserCreate(email="new@example.com", password="123456")
+    user_in = UserCreate(email="new@example.com", password="123456", api_key="api_key_000")
     
     # Cria um usuário que será retornado por db.refresh
-    created_user = User(id=1, email=user_in.email, hashed_password="hashed_pw")
+    created_user = User(id=1, email=user_in.email, api_key="api_key_000", hashed_password="hashed_pw")
 
     async def refresh_side_effect(user):
         # Simula o comportamento de atribuição feita internamente pelo refresh
         user.id = created_user.id
         user.email = created_user.email
+        user.api_key = created_user.api_key
         user.hashed_password = created_user.hashed_password
 
     db.refresh.side_effect = refresh_side_effect
@@ -51,6 +52,7 @@ async def test_create_user_success(mock_hash):
     user = await user_service.create_user(db, user_in)
 
     assert user.email == user_in.email
+    assert user.api_key == user_in.api_key
     assert user.hashed_password == "hashed_pw"
     db.add.assert_called_once()
     db.commit.assert_called_once()

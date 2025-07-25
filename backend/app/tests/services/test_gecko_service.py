@@ -5,7 +5,7 @@ from app.services.gecko_service import fetch_status, PING_URL
 from app.models.gecko import GeckoStatusResponse
 
 @pytest.mark.asyncio
-@patch("app.services.gecko.httpx.AsyncClient.get")
+@patch("app.services.gecko_service.httpx.AsyncClient.get")
 async def test_fetch_status(mock_get):
     """
     Testa se o serviço gecko retorna o modelo esperado
