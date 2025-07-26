@@ -33,7 +33,7 @@ async def create_user(db: AsyncSession, user_in: UserCreate):
         db.add(user)
         await db.commit()
         await db.refresh(user)
-        return user
+        return UserRead.model_validate(user)
     except Exception as e:
         logger.error(f"Erro ao criar novo usuário: {e}", exc_info=True)
         raise

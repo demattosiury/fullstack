@@ -32,6 +32,16 @@ export const useAuthStore = defineStore('auth', {
       } catch {
         this.email = null
       }
+    },
+    getTokenExpiration() {
+      if (!this.token) return null
+      try {
+        const payload = JSON.parse(atob(this.token.split('.')[1]))
+        if (!payload.exp) return null
+        return new Date(payload.exp * 1000)
+      } catch (e) {
+        return null
+      }
     }
   }
 })

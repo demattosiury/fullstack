@@ -15,7 +15,7 @@
       <form @submit.prevent="handleRegister">
         <input v-model="registerEmail" type="email" placeholder="Email" />
         <input v-model="registerPassword" type="password" placeholder="Senha" />
-        <input v-model="registerConfirm" type="password" placeholder="Confirme a senha" />
+        <input v-model="registerApiKey" type="text" placeholder="CoinGecko API KEY" />
         <button type="submit">Registrar</button>
         <p v-if="registerError" class="error">{{ registerError }}</p>
       </form>
@@ -33,7 +33,7 @@ const loginPassword = ref('')
 const loginError = ref('')
 const registerEmail = ref('')
 const registerPassword = ref('')
-const registerConfirm = ref('')
+const registerApiKey = ref('')
 const registerError = ref('')
 const auth = useAuthStore()
 const router = useRouter()
@@ -49,14 +49,10 @@ const handleLogin = async () => {
 }
 
 const handleRegister = async () => {
-  registerError.value = ''
-  if (registerPassword.value !== registerConfirm.value) {
-    registerError.value = 'Senhas não coincidem.'
-    return
-  }
+
 
   try {
-    await auth.register({ email: registerEmail.value, password: registerPassword.value })
+    await auth.register({ email: registerEmail.value, password: registerPassword.value, api_key: registerApiKey.value })
     router.push('/home')
   } catch {
     registerError.value = 'Erro ao registrar. Verifique os dados.'

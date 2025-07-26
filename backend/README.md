@@ -34,6 +34,7 @@ backend/
 │   │   └── user.py
 │   ├── services/               # Camada de caso de uso / regras de negócio
 │   │   ├── gecko_service.py
+│   │   ├── indicators_service.py
 │   │   └── user_service.py
 │   └── tests/                  # Testes unitários
 

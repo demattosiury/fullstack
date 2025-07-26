@@ -24,7 +24,7 @@
         17. Implementação do Alembic para automatização de migrations   (I: 24/07/2025 14:30; E: 24/07/2025 15:50)
         18. Ao consumir o endpoint '/importar' da API python, salvar dados de algumas moedas no banco de dados (I: 24/07/2025 16:30; E: 24/07/2025 22:20)
         19. Desenvolver endpoint '/tempo-importar' (I: 24/07/2025 16:30; E: 24/07/2025 22:20)
-        20. Desenvolver endpoint '/indicadores'
+        20. Desenvolver endpoint '/indicadores'     (I: 25/07/2025 20:20; E: 25/07/2025 20:45)
         21. Desenvolver testes faltantes
         22. Melhorar a documentação da API
 
@@ -34,7 +34,12 @@
         3. Criar página AuthLandingPage (login e registro)             (I: 25/07/2025 19:05; E: 25/07/2025 19:25)
         4. Criar HomePage com consumo da api de forma simples          (I: 25/07/2025 19:25; E: 25/07/2025 20:00)
         5. Proteger a HomePage                                         (I: 25/07/2025 20:00; E: 25/07/2025 20:10)
-        7. Conteinerização do front-end
+        6. Consumir '/indicadores' da api                              (I: 25/07/2025 20:50; E: 25/07/2025 21:20)
+        7. Criar filtro simples na HomePage                            (I: 25/07/2025 21:20; E: 25/07/2025 21:30) 
+        8. Conteinerização do front-end                                (I: 25/07/2025 21:30; E: 25/07/2025 21:50) 
+    
+    4. Melhorar documentação e Realização de extras
+    
 
 
 Início:  22/07/2025 - 14:00

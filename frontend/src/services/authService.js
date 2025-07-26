@@ -17,7 +17,8 @@ export async function login(email, password) {
 export async function register(email, password, api_key) {
   const response = await api.post('/auth/registrar', {
     email,
-    password
+    password,
+    api_key
   })
   return response.data
 }
