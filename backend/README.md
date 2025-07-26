@@ -42,6 +42,7 @@ backend/
 
 ## Requisitos
 - python 3.11.9
+- Docker (para execução via container, opcional)
 
 ## Pacotes
 - ``requirements.txt``
@@ -52,7 +53,7 @@ Com o caminho dessa pasta ('project\backend\') sendo exibido no terminal Windows
 1. ``python -m venv .venv``
 2. ``.\venv\Scripts\activate``
     1. Caso retorne "PSSecurityException", será necessário permitir a execução de scripts para o usuário atual com: ``Set-ExecutionPolicy RemoteSigned -Scope CurrentUser``
-3. O banco de dados está junto ao ``docker-compose.yml``, será necessário realizar o procedimento 'Desenvolvimento - Docker' antes do próximo passo, possibilitando a conexão com um banco de dados. Ou alterar manualmente no arquivo ``/core/database.py`` a constante ``DATABASE_URL``.
+3. O banco de dados está junto ao ``docker-compose.yml`` no root do projeto , será necessário realizar o procedimento 'Desenvolvimento - Docker' antes do próximo passo, possibilitando a conexão com um banco de dados. Ou alterar manualmente no arquivo ``/core/database.py`` a constante ``DATABASE_URL``.
 4. ``uvicorn app.main:app --reload``
 
 ## Desenvolvimento - Docker

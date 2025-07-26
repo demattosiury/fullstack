@@ -32,7 +32,7 @@ async def lifespan(app: FastAPI):
 
 # Instância principal do FastAPI
 app = FastAPI(
-    title="Teste Técnico - Dev. Full Stack Pleno/Sênior Pellissari",
+    title="Teste Técnico - Dev. Full Stack Pleno/Sênior",
     description="API desenvolvida como parte do teste técnico para vaga Full Stack.",
     version="1.0.0",
     lifespan=lifespan,

@@ -1,5 +1,43 @@
-# Vue 3 + Vite
+# Teste Técnico - Dev. Full Stack Pleno/Sênior
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+# Front-end
+## Arquitetura do projeto
+O projeto é um simples SPA em Vue3 (Composition API) com reatividade gerenciada através de Pinia (store).
+
+### Estrutura
+```
+frontend/
+├── public/
+├── src/
+├── Dockerfile
+├── index.html
+├── package-lock.json
+├── package.json
+├── README.md
+├── vite.config.js
+│   
+
+```
+
+## Requisitos
+- node 20.19.4
+- Docker (para execução via container, opcional)
+
+## Pacotes
+- ``package-lock.json``
+- ``package.json``
+
+
+## Desenvolvimento - Modo local
+Com o caminho dessa pasta ('project\frontend\') sendo exibido no terminal Windows de comando, executar:
+1. ``npm run dev``
+
+## Desenvolvimento - Docker
+Com o caminho dessa pasta ('project\frontend\') sendo exibido no terminal Windows de comando, executar:
+1. ``docker-compose up --build -d``
+2. ``docker-compose down`` adicionar o atributo ``-v`` quando houver necessidade de remover os volumes
+3. ``docker volume rm backend_postgres_data`` para remover os dados do db
+
+## Testes - Modo local
+Com o caminho dessa pasta ('project\frontend\') sendo exibido no terminal Windows de comando, executar:
