@@ -29,12 +29,12 @@
         22. Melhorar a documentação da API
 
     3. Desenvolver front-end
-        1. Iniciar projeto com VueJs
-        2. Escolher arquitetura da API
-        3. Conteinerização do front-end
-        4. Criar página de registro
-        5. Criar página de login
-        6. Criar página inicial com consumo da api
+        1. Escolher arquitetura da API                                 (I: 25/07/2025 19:00; E: 25/07/2025 19:05)
+        2. Iniciar projeto com VueJs                                   (I: 25/07/2025 19:00; E: 25/07/2025 19:05)
+        3. Criar página AuthLandingPage (login e registro)             (I: 25/07/2025 19:05; E: 25/07/2025 19:25)
+        4. Criar HomePage com consumo da api de forma simples          (I: 25/07/2025 19:25; E: 25/07/2025 20:00)
+        5. Proteger a HomePage                                         (I: 25/07/2025 20:00; E: 25/07/2025 20:10)
+        7. Conteinerização do front-end
 
 
 Início:  22/07/2025 - 14:00
