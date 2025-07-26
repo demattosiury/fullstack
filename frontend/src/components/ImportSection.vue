@@ -2,15 +2,15 @@
   <section class="import">
     <h2>Importar Moedas</h2>
     <p v-if="tempo">
-      Tempo restante: <strong>{{ tempo.tempo_restante }} min</strong><br />
-      Pode importar: <strong>{{ tempo.pode_importar ? 'Sim' : 'Não' }}</strong>
+      Tempo restante: <strong>{{ tempoFormatado }}</strong><br />
+      Pode importar: <strong>{{ canImport ? 'Sim' : 'Não' }}</strong>
     </p>
 
-    <button @click="onImportar" :disabled="!tempo?.pode_importar">
+    <button @click="onImportar" :disabled="!canImport">
       Consumir API CoinGecko
     </button>
 
-    <button @click="onIndicadores" :disabled="!tempo?.pode_importar" style="margin-left: 10px;">
+    <button @click="onIndicadores" :disabled="!canImport" style="margin-left: 10px;">
       Importar Moedas e Indicadores
     </button>
 
@@ -20,22 +20,60 @@
 </template>
 
 <script setup>
-defineProps({
+import { ref, watch, onUnmounted, computed } from 'vue'
+
+const props = defineProps({
   tempo: Object,
   importMessage: String,
   importError: String
 })
 
-defineEmits(['importar', 'indicadores'])
+const emit = defineEmits(['importar', 'indicadores'])
 
-const onImportar = () => {
-  // Emite evento para o componente pai
-  emit('importar')
+const onImportar = () => emit('importar')
+const onIndicadores = () => emit('indicadores')
+
+const tempoRestanteSegundos = ref(0)
+const canImport = ref(false)
+let intervalId = null
+
+function formatarTempo(segundos) {
+  const m = Math.floor(segundos / 60).toString().padStart(2, '0')
+  const s = (segundos % 60).toString().padStart(2, '0')
+  return `${m}:${s}`
 }
 
-const onIndicadores = () => {
-  emit('indicadores')
+function iniciarContagem() {
+  if (!props.tempo || typeof props.tempo.waiting_time !== 'number') {
+    tempoRestanteSegundos.value = 0
+    canImport.value = true
+    return
+  }
+
+  tempoRestanteSegundos.value = props.tempo.waiting_time
+  canImport.value = false
+
+  if (intervalId) clearInterval(intervalId)
+
+  intervalId = setInterval(() => {
+    if (tempoRestanteSegundos.value > 0) {
+      tempoRestanteSegundos.value--
+    } else {
+      canImport.value = true
+      clearInterval(intervalId)
+    }
+  }, 1000)
 }
+
+watch(() => props.tempo, () => {
+  iniciarContagem()
+}, { immediate: true })
+
+onUnmounted(() => {
+  if (intervalId) clearInterval(intervalId)
+})
+
+const tempoFormatado = computed(() => formatarTempo(tempoRestanteSegundos.value))
 </script>
 
 <style scoped>

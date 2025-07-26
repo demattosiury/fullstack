@@ -44,6 +44,7 @@ backend/
 - python 3.11.9
 
 ## Pacotes
+- ``requirements.txt``
 
 
 ## Desenvolvimento - Modo local

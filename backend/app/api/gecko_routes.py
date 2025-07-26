@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime, timedelta, timezone
+import time
 import logging
+import os
+from dotenv import load_dotenv
 
 from app.core.security import decode_token, oauth2_scheme
 from app.services.gecko_service import fetch_status, fetch_coins_market
@@ -21,10 +23,12 @@ router = APIRouter(prefix="/gecko", tags=["CoinGeckoAPI"])
 
 
 # Variável global para armazenar o último horário de importação
-last_global_import: datetime | None = None
+last_global_import: float | None = None
 
-# Variável global para armazenar quantos minutos de espera
-minutes: int = 3
+
+load_dotenv()
+# Variável global para armazenar quantos segundos de espera
+SECONDS: int = int(os.getenv("COINGECKO_SECONDS"))
 
 
 @router.get(
@@ -63,11 +67,10 @@ async def get_gecko_status(token: str = Depends(oauth2_scheme)):
     "/tempo-importar",
     response_model=GeckoWaitingTimeResponse,
     summary="Tempo restante para nova importação",
-    description=f"Verifica se já se passaram {minutes} minutos desde a última importação de moedas.",
+    description=f"Verifica se já se passaram {SECONDS} segundos desde a última importação de moedas.",
 )
 async def tempo_restante_importacao(token: str = Depends(oauth2_scheme)):
     try:
-        global minutes
         payload = decode_token(token)
         user_email = payload.get("sub")
 
@@ -77,19 +80,17 @@ async def tempo_restante_importacao(token: str = Depends(oauth2_scheme)):
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido."
             )
 
-        now = datetime.now(timezone.utc)
+        now = time.time()
         if not last_global_import:
             return GeckoWaitingTimeResponse(waiting_time=0, can_import=True)
 
-        diff = now - last_global_import
-        passed_minutes = diff.total_seconds() / 60
+        elapsed = now - last_global_import
 
-        if passed_minutes >= minutes:
+        if elapsed >= SECONDS:
             return GeckoWaitingTimeResponse(waiting_time=0, can_import=True)
-
         else:
             return GeckoWaitingTimeResponse(
-                waiting_time=int(minutes - passed_minutes), can_import=False
+                waiting_time=int(SECONDS - elapsed), can_import=False
             )
 
     except HTTPException:
@@ -109,14 +110,14 @@ async def tempo_restante_importacao(token: str = Depends(oauth2_scheme)):
     response_model=GeckoImportResponse,
     status_code=201,
     summary="Importar moedas do CoinGecko",
-    description=f"Importa moedas e indicadores, limitado a 1 chamada a cada {minutes} minutos.",
+    description=f"Importa moedas e indicadores, limitado a 1 chamada a cada {SECONDS} segundos.",
 )
 async def importar_moedas(
     token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)
 ):
     try:
 
-        global last_global_import, minutes
+        global last_global_import
 
         payload = decode_token(token)
         user_email: str = payload.get("sub")
@@ -128,16 +129,16 @@ async def importar_moedas(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido."
             )
 
-        now = datetime.now(timezone.utc)
+        now = time.time()
 
-        if last_global_import and now - last_global_import < timedelta(minutes=minutes):
-            waiting_time = minutes - int(
-                (now - last_global_import).total_seconds() // 60
-            )
-            raise HTTPException(
-                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                detail=f"Importação já realizada. Tente novamente em ~{waiting_time} minuto(s).",
-            )
+        if last_global_import:
+            elapsed = now - last_global_import
+            if elapsed < SECONDS:
+                waiting_time = int(SECONDS - elapsed)
+                raise HTTPException(
+                    status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                    detail=f"Importação já realizada. Tente novamente em ~{waiting_time} segundos(s).",
+                )
 
         total = await fetch_coins_market(api_key=api_key, db=db)
         last_global_import = now

@@ -130,7 +130,7 @@ onMounted(async () => {
     await getApiStatus()
     await getTempo()
 
-    if (tempo.value?.pode_importar) {
+    if (tempo.value?.can_import) {
       // Executa automaticamente se estiver liberado
       await importar()
     } else {

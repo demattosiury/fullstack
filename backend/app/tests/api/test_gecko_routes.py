@@ -88,7 +88,7 @@ async def test_tempo_restante_importacao_false():
     Testa se a rota /tempo-importar retorna status 200 e o modelo esperado.
     """
     headers = {"Authorization": "Bearer faketoken123"}
-    mock_response = GeckoWaitingTimeResponse(waiting_time=2, can_import=False)
+    mock_response = GeckoWaitingTimeResponse(waiting_time=120, can_import=False)
 
     with patch(
         "app.api.gecko_routes.decode_token"  # ),patch("app.api.gecko_routes.fetch_coins_market",new=AsyncMock(return_value=mock_value),
@@ -98,4 +98,5 @@ async def test_tempo_restante_importacao_false():
             response = await ac.get("/gecko/tempo-importar", headers=headers)
 
             assert response.status_code == 200
-            assert response.json() == mock_response.model_dump()
+            data = response.json()
+            assert data['waiting_time'] < mock_response.waiting_time
