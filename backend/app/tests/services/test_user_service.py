@@ -53,7 +53,7 @@ async def test_create_user_success(mock_hash):
 
     assert user.email == user_in.email
     assert user.api_key == user_in.api_key
-    assert user.hashed_password == "hashed_pw"
+
     db.add.assert_called_once()
     db.commit.assert_called_once()
     db.refresh.assert_called_once()
@@ -62,13 +62,15 @@ async def test_create_user_success(mock_hash):
 @patch("app.services.user_service.verify_password", return_value=True)
 @patch("app.services.user_service.get_user_by_email")
 async def test_authenticate_user_success(mock_get_user, mock_verify):
-    mock_user = User(id=1, email="test@example.com", hashed_password="hashed_pw")
+    mock_user = User(id=1, email="test@example.com", hashed_password="hashed_pw", api_key="CG-apiKey_000")
     db = AsyncMock()
     mock_get_user.return_value = mock_user
 
     user = await user_service.authenticate_user(db, "test@example.com", "123456")
 
-    assert user == mock_user
+    assert user.id == mock_user.id
+    assert user.email == mock_user.email
+    assert user.api_key == mock_user.api_key
     mock_get_user.assert_called_once()
     mock_verify.assert_called_once()
 

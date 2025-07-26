@@ -1,17 +1,18 @@
-# app/services/indicator_service.py
-
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import func, select
+import logging
 
-# Importe seu modelo Cryptocurrency e os schemas
 from app.models.gecko import (
     Cryptocurrency,
     CryptocurrencySchema,
     CryptocurrencyIndicatorsSchema,
+    IndicatorsResponse,
 )
 
+# Logger específico para operações de indicadores
+logger = logging.getLogger("app.services.indicators_service")
 
 def calculate_indicators(crypto: Cryptocurrency) -> CryptocurrencyIndicatorsSchema:
     """
@@ -78,7 +79,9 @@ def calculate_indicators(crypto: Cryptocurrency) -> CryptocurrencyIndicatorsSche
     )
 
 
-async def get_latest_coins_and_indicators(db: AsyncSession) -> Dict[str, List[Any]]:
+async def get_latest_coins_and_indicators(
+    db: AsyncSession,
+) -> IndicatorsResponse:  # Dict[str, List[Any]]:
     """
     Busca os registros mais recentes (pelo imported_at) de cada criptomoeda no banco de dados,
     calcula seus indicadores e retorna ambos.
@@ -117,7 +120,4 @@ async def get_latest_coins_and_indicators(db: AsyncSession) -> Dict[str, List[An
         indicators = calculate_indicators(coin)
         coins_indicators_data.append(indicators)
 
-    return {
-        "coins": coins_data,  # Agora contém apenas os registros MAIS RECENTES
-        "coins_indicators": coins_indicators_data,  # Contém indicadores apenas dos registros MAIS RECENTES
-    }
+    return IndicatorsResponse(coins=coins_data, coins_indicators=coins_indicators_data)

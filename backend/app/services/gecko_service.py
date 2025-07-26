@@ -3,24 +3,45 @@ import os
 import logging
 from typing import Optional
 from dotenv import load_dotenv
-from app.models.gecko import GeckoStatusResponse
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import SQLAlchemyError
-from app.models.gecko import Cryptocurrency
 from datetime import datetime, timezone
 
-load_dotenv()
-BASE_URL = os.getenv("COINGECKO_BASE_URL")
-PING_URL = f"{BASE_URL}/ping"
-#COINS_URL = f"{BASE_URL}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=1&page=1"
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import SQLAlchemyError
 
+from app.models.gecko import GeckoStatusResponse, Cryptocurrency
+
+# Logger dedicado para CoinGecko services
 logger = logging.getLogger("app.services.gecko")
 
+# Carrega variáveis do arquivo .env
+load_dotenv()
+
+BASE_URL = os.getenv("COINGECKO_BASE_URL")
+PING_URL = f"{BASE_URL}/ping"
+
+COINS_PER_PAGE = 10
+PAGE = 1
 
 async def fetch_from_api(url: str, api_key: Optional[str] = None) -> dict:
+    """
+    Faz uma requisição GET assíncrona para a API da CoinGecko.
+
+    Args:
+        url (str): URL completa do endpoint da API.
+        api_key (Optional[str]): Chave da API (se necessário).
+
+    Returns:
+        dict: Dados retornados pela API.
+
+    Raises:
+        httpx.HTTPStatusError: Em caso de erro HTTP.
+        Exception: Para outros erros inesperados.
+    """
     headers = {}
     if api_key:
-        headers = {"accept": "application/json"}#, "x-cg-pro-api-key": api_key}
+        headers = {
+            "accept": "application/json"
+        }  # "x-cg-pro-api-key" pode ser adicionado aqui
     try:
         async with httpx.AsyncClient() as client:
             logger.info(f"Requisitando {url}")
@@ -37,6 +58,15 @@ async def fetch_from_api(url: str, api_key: Optional[str] = None) -> dict:
 
 
 async def fetch_status() -> GeckoStatusResponse:
+    """
+    Realiza um health check (ping) na CoinGecko API.
+
+    Returns:
+        GeckoStatusResponse: Objeto contendo a resposta do health check.
+
+    Raises:
+        Exception: Se a chamada falhar.
+    """
     logger.info(f"Requisitando health check da GeckoCoinAPI.")
     try:
         data = await fetch_from_api(PING_URL)
@@ -47,6 +77,19 @@ async def fetch_status() -> GeckoStatusResponse:
 
 
 async def persist_coins(coins: list[dict], db: AsyncSession) -> int:
+    """
+    Persiste uma lista de moedas no banco de dados.
+
+    Args:
+        coins (list[dict]): Lista de moedas retornadas da API.
+        db (AsyncSession): Sessão assíncrona do banco de dados.
+
+    Returns:
+        int: Quantidade de registros inseridos com sucesso.
+
+    Raises:
+        SQLAlchemyError: Em caso de erro durante a transação.
+    """
     total = 0
 
     try:
@@ -54,7 +97,9 @@ async def persist_coins(coins: list[dict], db: AsyncSession) -> int:
 
             ath_date = datetime.fromisoformat(coin.get("ath_date")).replace(tzinfo=None)
             atl_date = datetime.fromisoformat(coin.get("atl_date")).replace(tzinfo=None)
-            last_updated = datetime.fromisoformat(coin.get("last_updated")).replace(tzinfo=None)
+            last_updated = datetime.fromisoformat(coin.get("last_updated")).replace(
+                tzinfo=None
+            )
 
             new = Cryptocurrency(
                 coingecko_id=coin.get("id"),
@@ -84,7 +129,7 @@ async def persist_coins(coins: list[dict], db: AsyncSession) -> int:
                 atl_change_percentage=coin.get("atl_change_percentage"),
                 atl_date=atl_date,
                 last_updated=last_updated,
-                imported_at=datetime.now(timezone.utc).replace(tzinfo=None)
+                imported_at=datetime.now(timezone.utc).replace(tzinfo=None),
             )
             db.add(new)
             total += 1
@@ -100,9 +145,22 @@ async def persist_coins(coins: list[dict], db: AsyncSession) -> int:
 
 
 async def fetch_coins_market(api_key: str, db) -> int:
+    """
+    Busca dados de mercado da CoinGecko e os persiste no banco.
+
+    Args:
+        api_key (str): Chave da API da CoinGecko (pode ser dummy para modo gratuito).
+        db (AsyncSession): Sessão assíncrona do banco de dados.
+
+    Returns:
+        int: Quantidade de moedas importadas.
+
+    Raises:
+        Exception: Em caso de erro na chamada ou persistência.
+    """
     logger.info(f"Requisitando mercado de moedas da GeckoCoinAPI.")
     try:
-        url = f"{BASE_URL}/coins/markets?x_cg_demo_api_key={api_key}&vs_currency=usd&order=market_cap_desc&per_page=10&page=1"
+        url = f"{BASE_URL}/coins/markets?x_cg_demo_api_key={api_key}&vs_currency=usd&order=market_cap_desc&per_page={COINS_PER_PAGE}&page={PAGE}"
         coins = await fetch_from_api(url=url, api_key=api_key)
         total = await persist_coins(coins, db)
         return total

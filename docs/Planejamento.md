@@ -25,8 +25,8 @@
         18. Ao consumir o endpoint '/importar' da API python, salvar dados de algumas moedas no banco de dados (I: 24/07/2025 16:30; E: 24/07/2025 22:20)
         19. Desenvolver endpoint '/tempo-importar' (I: 24/07/2025 16:30; E: 24/07/2025 22:20)
         20. Desenvolver endpoint '/indicadores'     (I: 25/07/2025 20:20; E: 25/07/2025 20:45)
-        21. Desenvolver testes faltantes
-        22. Melhorar a documentação da API
+        21. Desenvolver testes faltantes            (I: 26/07/2025 01:30; E: 26/07/2025 05:35)
+        22. Melhorar a documentação da API          (I: 26/07/2025 01:30; E: 26/07/2025 )
 
     3. Desenvolver front-end
         1. Escolher arquitetura da API                                 (I: 25/07/2025 19:00; E: 25/07/2025 19:05)
@@ -39,7 +39,7 @@
         8. Conteinerização do front-end                                (I: 25/07/2025 21:30; E: 25/07/2025 21:50) 
     
     4. Melhorar documentação e Realização de extras
-    
+
 
 
 Início:  22/07/2025 - 14:00
